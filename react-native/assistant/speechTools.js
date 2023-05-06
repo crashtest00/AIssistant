@@ -1,5 +1,5 @@
 import * as Speech from 'expo-speech';
-import Voice from '@react-native-community/voice';
+import Voice from '@react-native-voice/voice';
 import { counterEvent } from 'react-native/Libraries/Performance/Systrace';
 
 // Function to speak
