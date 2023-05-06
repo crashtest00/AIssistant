@@ -9,7 +9,7 @@
   },
   "dependencies": {
     "@react-native-voice/voice": "^3.2.4",
-    "expo": "~48.0.15",
+    "expo": "^48.0.0",
     "expo-av": "~13.2.1",
     "expo-dev-client": "^2.2.1",
     "expo-permissions": "^14.1.1",
