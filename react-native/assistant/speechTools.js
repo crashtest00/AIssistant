@@ -13,7 +13,7 @@ export function sayThis(script, voice) {
 // Function to get text from speech
 export const getText = async () => {
     try {
-      await Voice.start('en-US', { speechTimeout: 3000 });
+      await Voice.start('en-US');
       const speechResults = await Voice.stop();
       return speechResults.value[0];
     } catch (e) {
@@ -21,6 +21,26 @@ export const getText = async () => {
     }
   };
 
+export const startVoiceRecognition = async () => {
+  await Voice.start('en-US');
+  console.log("Speech Recognition Service: ", await Voice.getSpeechRecognitionServices())
+  console.log("Voice is available: ", await Voice.isAvailable());
+  console.log("Voice is Recognizing: ", await Voice.isRecognizing())
+  Voice.onSpeechResults = async () => {
+    console.log(e[0])
+  }
+  console.log("Transcription: ", Voice.onSpeechPartialResults)
+};
+
+  export const stopVoiceRecognition = async () => {
+    console.log('Voice recognition stopped.');
+    Voice.stop();
+    console.log(await Voice.isAvailable())
+
+
+    console.log(Voice.onSpeechResults)
+  };
+  
 // Utility for getting list of voices
 export async function getVoices() {
   const availableVoices = await Speech.getAvailableVoicesAsync();

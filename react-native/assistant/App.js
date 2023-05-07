@@ -1,28 +1,67 @@
 import * as React from 'react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
 import * as Speech from 'expo-speech';
 import { sayThis } from './speechTools';
 import { getText } from './speechTools';
+import { stopVoiceRecognition } from './speechTools';
+import { startVoiceRecognition } from './speechTools';
+import Voice from '@react-native-voice/voice';
 import { Audio } from 'expo-av'
 
 export default function App() {
-  const [thingToSay, setThingToSay] = useState('');
-  //const thingToSay = "Here's some really awesome text for the groovy Australian woman to say."
+  let [started, setStarted] = useState(false);
+  let [results, setResults] = useState([]);
+
+  useEffect(() => {
+    Voice.onSpeechError = onSpeechError;
+    Voice.onSpeechResults = onSpeechResults;
+
+    return () => {
+      Voice.destroy().then(Voice.removeAllListeners);
+    }
+  }, []);
+
+  const startSpeechToText = async () => {
+    await Voice.start("en-US");
+    setStarted(true);
+  };
+
+  const stopSpeechToText = async () => {
+    await Voice.stop();
+    setStarted(false);
+  };
+
+  const onSpeechResults = (result) => {
+    setResults(result.value);
+    setThingToSay(result.value[0])
+    console.log(result.value[0]);
+  };
+
+  const onSpeechError = (error) => {
+    console.log(error);
+  };
+
+  const [thingToSay, setThingToSay] = useState('No text has been recognized yet');
   voice = 'en-au-x-auc-local'
 
-  const handleSpeechToText = async () => {
-    const recognizedText = await getText();
-    setThingToSay(recognizedText);
-  };
+  const handleVoiceStart = () => {
+    startVoiceRecognition();
+  }
+  const handleVoiceStop = () => {
+    stopVoiceRecognition();
+    console.log("Speech service terminated.")
+  }
 
   return (
     <View style={styles.container}>
       <Text style={styles.Texts}>{thingToSay}</Text>
-      <Button title='Speech to text' onPress={handleSpeechToText} />
-      <Button title='en-au-x-auc-local' onPress={() => sayThis(thingToSay, voice)} />
+      <Button title='Start Voice' onPress={startSpeechToText} />
+      <Button title='Stop Voice' onPress={stopSpeechToText} />
+      <Button title='en-au-x-auc-local' onPress={() => sayThis(thingToSay, voice)()} />
     </View>
   );
+
 }const styles = StyleSheet.create({
   container: {
     flex: 1,

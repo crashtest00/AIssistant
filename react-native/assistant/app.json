@@ -9,6 +9,15 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "plugins": [
+      [
+        "@react-native-voice/voice",
+        {
+          "microphonePermission": "Allow $(PRODUCT_NAME) to access your microphone",
+          "speechRecogntionPermission": "Allow $(PRODUCT_NAME) to securely recognize user speech"
+        }
+      ]
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.anonymous.assistant"
@@ -18,10 +27,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.anonymous.assistant",
-      "permissions": [
-        "android.permission.RECORD_AUDIO"
-      ]
+      "package": "com.anonymous.assistant"
     },
     "web": {
       "favicon": "./assets/favicon.png"
