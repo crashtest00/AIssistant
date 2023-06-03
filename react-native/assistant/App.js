@@ -1,3 +1,6 @@
+// Build Command: eas build --profile development --platform android
+// Launch Server: npx expo start --dev-client
+
 import * as React from 'react';
 import { useEffect, useState } from 'react';
 import { View, StyleSheet, Button, Text } from 'react-native';
@@ -31,23 +34,21 @@ export default function App() {
 
     speechTools.cleanupAfterSpeech();
 
-
-   'App.js successfully accessed startSpeech'
     // TODO: It would be nice to get a beep when the system is listening.
 
     // If writeNote = False, then treat the query string as a search query and hit the CGPT api
-    if(!writeNote) {
-      setWriting(false);
-      const queryResult = 'Query is under construction'
-      // const queryResult = await chatQuery.getQueryResults(queryString);
-      // setLastQueryResult(queryResult);
-      speechTools.sayThis(queryResult);
-    } else {
-      setWriting(true);
-      const response = 'This is under construction'
-      // const response = await noteWriter(lastQueryResult);
-      speechTools.sayThis(response);
-    }
+    // if(!writeNote) {
+    //   setWriting(false);
+    //   const queryResult = 'Query is under construction'
+    //   // const queryResult = await chatQuery.getQueryResults(queryString);
+    //   // setLastQueryResult(queryResult);
+    //   speechTools.sayThis(queryResult);
+    // } else {
+    //   setWriting(true);
+    //   const response = 'This is under construction'
+    //   // const response = await noteWriter(lastQueryResult);
+    //   speechTools.sayThis(response);
+    // }
   };
 
 
@@ -58,6 +59,18 @@ export default function App() {
 
   }
   
+  const handleStartSession = () => {
+    startSession()
+      .then(() => {
+        // The async function completed successfully
+        console.log("Async function completed successfully");
+      })
+      .catch((error) => {
+        // An error occurred during the async function
+        console.error("Async function encountered an error:", error);
+      });
+  };
+
   // Text to Speech
 
   // TODO: Add a page to view/manage notes: https://reactnative.dev/docs/navigation & the related function in noteWriter
@@ -65,7 +78,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.Texts}>{thingToSay}</Text>
-      <Button title='Start Session' onPress={startSession} />
+      <Button title='Start Session' onPress={handleStartSession} />
       <Button title='Stop Voice' onPress={stopSession} />
       <Button title='en-au-x-auc-local' onPress={() => speechTools.sayThis(thingToSay, voice)()} />
     </View>

@@ -21,6 +21,7 @@ export const startSpeech = () => {
         queryString: transcription,
         writeNote: false
       });
+      Voice.onSpeechResults = null;
     };
 
     Voice.onSpeechResults = handleResults;
