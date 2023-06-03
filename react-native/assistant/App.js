@@ -20,56 +20,68 @@ export default function App() {
 
   // Start Session
   const startSession = async () => {
-    setSessionActive(true);
-    setListening(true);
-    console.log("Session started successfully")
-
-    // Get speech & writeNote bool. 
-    const { queryString, writeNote } = await speechTools.startSpeech();
-
-    console.log("Query String:", queryString);
-    console.log("Write Note:", writeNote);
-  
-    setThingToSay(queryString);
-
-    speechTools.cleanupAfterSpeech();
-
-    // TODO: It would be nice to get a beep when the system is listening.
-
-    // If writeNote = False, then treat the query string as a search query and hit the CGPT api
-    // if(!writeNote) {
-    //   setWriting(false);
-    //   const queryResult = 'Query is under construction'
-    //   // const queryResult = await chatQuery.getQueryResults(queryString);
-    //   // setLastQueryResult(queryResult);
-    //   speechTools.sayThis(queryResult);
-    // } else {
-    //   setWriting(true);
-    //   const response = 'This is under construction'
-    //   // const response = await noteWriter(lastQueryResult);
-    //   speechTools.sayThis(response);
-    // }
+    try {
+      setListening(true);
+      await Voice.start('en-US');
+      console.log("Session started successfully");
+    } catch (error) {
+      crossOriginIsolated.log('Error starting voice recognition', error);
+    }
   };
 
-
-    // TODO: Add while loop to keep the conversation going
-
-
-  const stopSession = async () => {
-
-  }
-  
-  const handleStartSession = () => {
-    startSession()
-      .then(() => {
-        // The async function completed successfully
-        console.log("Async function completed successfully");
-      })
-      .catch((error) => {
-        // An error occurred during the async function
-        console.error("Async function encountered an error:", error);
-      });
+  async function stopSession() {
+    try {
+      setListening(false);
+      await Voice.stop();
+    } catch (error) {
+      console.log('Error stopping voice recognition', error);
+    }
   };
+
+  Voice.onSpeechResults = (event) => {
+    const { value } = event;
+    if (value && value.length >0 ) {
+      setThingToSay(value[0]);
+      console.log("Query String:", value[0]);
+    }
+  };
+
+  //   // TODO: It would be nice to get a beep when the system is listening.
+
+  //   // If writeNote = False, then treat the query string as a search query and hit the CGPT api
+  //   // if(!writeNote) {
+  //   //   setWriting(false);
+  //   //   const queryResult = 'Query is under construction'
+  //   //   // const queryResult = await chatQuery.getQueryResults(queryString);
+  //   //   // setLastQueryResult(queryResult);
+  //   //   speechTools.sayThis(queryResult);
+  //   // } else {
+  //   //   setWriting(true);
+  //   //   const response = 'This is under construction'
+  //   //   // const response = await noteWriter(lastQueryResult);
+  //   //   speechTools.sayThis(response);
+  //   // }
+  // };
+
+
+  //   // TODO: Add while loop to keep the conversation going
+
+
+  // const stopSession = async () => {
+
+  // }
+  
+  // const handleStartSession = () => {
+  //   startSession()
+  //     .then(() => {
+  //       // The async function completed successfully
+  //       console.log("Async function completed successfully");
+  //     })
+  //     .catch((error) => {
+  //       // An error occurred during the async function
+  //       console.error("Async function encountered an error:", error);
+  //     });
+  // };
 
   // Text to Speech
 
@@ -78,7 +90,7 @@ export default function App() {
   return (
     <View style={styles.container}>
       <Text style={styles.Texts}>{thingToSay}</Text>
-      <Button title='Start Session' onPress={handleStartSession} />
+      <Button title='Start Session' onPress={startSession} />
       <Button title='Stop Voice' onPress={stopSession} />
       <Button title='en-au-x-auc-local' onPress={() => speechTools.sayThis(thingToSay, voice)()} />
     </View>
