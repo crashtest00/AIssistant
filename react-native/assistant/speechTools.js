@@ -3,25 +3,29 @@ import Voice from '@react-native-voice/voice'; //https://github.com/react-native
 
 // Function to speak WORKS
 export function sayThis(script, voice) {
-  options = {'voice':voice}
+  const options = {'voice':voice}
   const speak = () => {
     Speech.speak(script, options);
   };return speak
 }
 
 // Function to get text from speech NEEDS TESTED
-export const startSpeech = () => {
-  return new Promise((resolve) => {
+export const startSpeech = (setQuery, setIsListening) => {
+  return new Promise((resolve, reject) => {
+    // console.log('Voice.isRecognizing()', Voice.isRecognizing())
+    // if(Voice.isRecognizing()) reject('The voice module is busy')
     let transcription = '';
 
-    const handleResults = (results) => {
+    const handleResults = async (results) => {
+      console.log('How many times does this run?', results)
       transcription = results.value[0];
-      console.log('transcription: ', transcription)
-      resolve({
-        queryString: transcription,
-        writeNote: false
-      });
-      Voice.onSpeechResults = null;
+      setQuery(transcription);
+      console.log(transcription)
+      setIsListening(false);
+      // Optionally, you can resolve the promise here if needed
+      const error = Voice.stop();
+      console.log('error', error)
+      resolve(transcription);
     };
 
     Voice.onSpeechResults = handleResults;

@@ -11,28 +11,33 @@ import Voice from '@react-native-voice/voice';
 
 export default function App() {
   // Set states & defaults
-  const [isListening, setListening] = useState(false); 
-  const [isWriting, setWriting] = useState(false);
-  const [isSessionActive, setSessionActive] = useState(false); //Could eventually be used to update button text for single button ver
+  const [isListening, setIsListening] = useState(false)
+  const [query, setQuery] = useState('')
   const [lastQueryResult, setLastQueryResult] = useState('')
   const [thingToSay, setThingToSay] = useState('No text has been recognized yet');
   const voice = 'en-au-x-auc-local' // Eventually this should call the getVoices function so the user can select
 
+
+  const setQueryFn = val => {
+    console.log(`setQueyr ran with value ${val}`)
+    setQuery(val)
+  }
+
+  console.log("Listening? ", isListening);
+  console.log("Current query: ", query);
+
+
+
   // Start Session
   const startSession = async () => {
-    setSessionActive(true);
-    setListening(true);
     console.log("Session started successfully")
 
-    // Get speech & writeNote bool. 
-    const { queryString, writeNote } = await speechTools.startSpeech();
-
-    console.log("Query String:", queryString);
-    console.log("Write Note:", writeNote);
-  
-    setThingToSay(queryString);
-
-    speechTools.cleanupAfterSpeech();
+    // Get speech & writeNote bool.
+    setIsListening(true)
+    await speechTools.startSpeech(setQueryFn, setIsListening);
+    console.log("Listening? ", isListening)
+    console.log("Query is: ", query)
+    setThingToSay(query)
 
     // TODO: It would be nice to get a beep when the system is listening.
 
